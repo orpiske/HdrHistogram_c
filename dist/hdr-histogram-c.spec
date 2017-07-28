@@ -1,13 +1,10 @@
-%global _enable_debug_package 0
-%global debug_package %{nil}
-
 Summary:            C port of High Dynamic Range (HDR) Histogram
 Name:               hdr-histogram-c
 Version:            0.9.6
-Release:            1%{?dist}
+Release:            2%{?dist}
 License:            BSD or CC0
 Group:              Development/Tools
-Source:             hdr-histogram-c-%{version}.tar.gz
+Source:             https://github.com/HdrHistogram/HdrHistogram_c/archive/%{version}.tar.gz
 URL:                https://github.com/HdrHistogram/HdrHistogram_c
 BuildRequires:      cmake
 BuildRequires:      make
@@ -33,12 +30,12 @@ Development packages for the C port of High Dynamic Range (HDR) Histogram
 
 %build
 mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=%{buildroot}/usr ..
+%cmake ..
 make all
 
 %install
 cd build
-make install
+make install DESTDIR=%{buildroot}
 
 %files
 %doc README.md LICENSE.txt COPYING.txt
@@ -51,5 +48,8 @@ make install
 
 
 %changelog
-* Sun Jul 23 2017 Otavio R. Piske <angusyoung@gmail.com> - 20170723
+* Fri Jul 28 2017 Otavio R. Piske <angusyoung@gmail.com> - 0.9.6-2
+- Adjust to comply with fedora packaging guidelines
+
+* Sun Jul 23 2017 Otavio R. Piske <angusyoung@gmail.com> - 0.9.6-1
 - Initial packaging

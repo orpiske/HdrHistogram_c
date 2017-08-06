@@ -1,7 +1,7 @@
 Summary:            C port of High Dynamic Range (HDR) Histogram
 Name:               hdr-histogram-c
 Version:            0.9.6
-Release:            3%{?dist}
+Release:            4%{?dist}
 License:            BSD or CC0
 Group:              Development/Tools
 Source:             https://github.com/HdrHistogram/HdrHistogram_c/archive/%{version}.tar.gz
@@ -30,7 +30,7 @@ Development packages for the C port of High Dynamic Range (HDR) Histogram
 
 %build
 mkdir build && cd build
-%cmake ..
+%cmake -DCMAKE_USER_C_FLAGS="-fPIC" ..
 make all
 
 %install
@@ -48,6 +48,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Sun Aug 06 2017 Otavio R. Piske <angusyoung@gmail.com> - 0.9.6-4
+- Added support for passing additional compiler flags
+
 * Sun Aug 06 2017 Otavio R. Piske <angusyoung@gmail.com> - 0.9.6-3
 - Added a patch for the invalid header initialization (upstream issue #44)
 

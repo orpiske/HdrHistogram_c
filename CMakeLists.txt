@@ -26,7 +26,7 @@ ENABLE_TESTING()
 if(UNIX)
     include(GNUInstallDirs)
 
-    set(CMAKE_C_FLAGS "-Wall -Wno-unknown-pragmas -Wextra -Wshadow -Winit-self -Wmissing-prototypes -D_GNU_SOURCE")
+    set(CMAKE_C_FLAGS "-Wall -Wno-unknown-pragmas -Wextra -Wshadow -Winit-self -Wmissing-prototypes -D_GNU_SOURCE ${CMAKE_USER_C_FLAGS}")
     set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
     set(CMAKE_C_FLAGS_RELEASE "-O3 -g")
 endif()

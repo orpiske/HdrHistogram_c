@@ -3,11 +3,13 @@ Name:               hdr-histogram-c
 Version:            0.9.6
 Release:            6%{?dist}
 License:            BSD or CC0
-Source:             https://github.com/HdrHistogram/HdrHistogram_c/archive/%{version}.tar.gz
+# To be used only when submitting the package
+# Source:             https://github.com/HdrHistogram/HdrHistogram_c/archive/%{version}.tar.gz
+Source:             hdr-histogram-c-%{version}.tar.gz
 URL:                https://github.com/HdrHistogram/HdrHistogram_c
 BuildRequires:      cmake
 BuildRequires:      make
-BuildRequires:      gcc
+BuildRequires:      gcc >= 4.8.0
 BuildRequires:      zlib-devel
 
 %description
@@ -29,6 +31,7 @@ mkdir build && cd build
 %cmake -DCMAKE_USER_C_FLAGS="-fPIC" ..
 %make_build all
 
+
 %install
 cd build
 %make_install
@@ -37,6 +40,7 @@ cd build
 %doc README.md
 %license LICENSE.txt COPYING.txt
 %{_libdir}/*.so.*
+%{_libdir}/*.a
 %{_bindir}/*
 
 %post -p /sbin/ldconfig
@@ -47,13 +51,15 @@ cd build
 %{_includedir}/*
 %{_libdir}/*.so
 
+
 %post devel -p /sbin/ldconfig
 
 %postun devel -p /sbin/ldconfig
 
 %changelog
 * Mon Aug 28 2017 Otavio R. Piske <angusyoung@gmail.com> - 0.9.6-6
-- Adjusted to match fedora packaging guidelines
+- Fedora packaging guidelines: only package so in devel package
+- Fedora packaging guidelines: adjust BuildRequires, otherwise fails on older platforms
 
 * Sun Aug 06 2017 Otavio R. Piske <angusyoung@gmail.com> - 0.9.6-5
 - Adjusted to use the correct license macro

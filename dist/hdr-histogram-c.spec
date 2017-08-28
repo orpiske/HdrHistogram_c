@@ -1,15 +1,23 @@
+%{?scl:%scl_package hdr-histogram-c}
+%{!?scl:%global pkg_name %{name}}
+
 Summary:            C port of High Dynamic Range (HDR) Histogram
 Name:               hdr-histogram-c
 Version:            0.9.6
 Release:            6%{?dist}
 License:            BSD or CC0
-# To be used only when submitting the package
-# Source:             https://github.com/HdrHistogram/HdrHistogram_c/archive/%{version}.tar.gz
 Source:             hdr-histogram-c-%{version}.tar.gz
 URL:                https://github.com/HdrHistogram/HdrHistogram_c
+%if 0%{?rhel} == 6 || 0%{?centos} == 6
+BuildRequires:      scl-utils-build
+BuildRequires:      devtoolset-3-runtime
+BuildRequires:      devtoolset-3-gcc
+Requires:           devtoolset-3-runtime
+%else
+BuildRequires:      gcc >= 4.8.0
+%endif
 BuildRequires:      cmake
 BuildRequires:      make
-BuildRequires:      gcc >= 4.8.0
 BuildRequires:      zlib-devel
 
 %description
@@ -28,16 +36,27 @@ Development packages for the C port of High Dynamic Range (HDR) Histogram
 
 %build
 mkdir build && cd build
+
+%if 0%{?rhel} == 6 || 0%{?centos} == 6
+
+%{?scl:scl enable rh-devtoolset-3 "}
+set -e
+cmake -DCMAKE_C_COMPILER=/opt/rh/devtoolset-3/root/usr/bin/gcc -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_LIBDIR:PATH=/usr/lib64 -DINCLUDE_INSTALL_DIR:PATH=/usr/include -DLIB_INSTALL_DIR:PATH=/usr/lib64 -DSYSCONF_INSTALL_DIR:PATH=/etc -DSHARE_INSTALL_PREFIX:PATH=/usr/share -DLIB_SUFFIX=64 -DCMAKE_SKIP_RPATH:BOOL=ON -DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_USER_C_FLAGS="-fPIC" ..
+%make_build all
+%{?scl:"}
+
+%else
+
 %cmake -DCMAKE_USER_C_FLAGS="-fPIC" ..
 %make_build all
 
+%endif
 
 %install
 cd build
 %make_install
 
 %files
-%doc README.md
 %license LICENSE.txt COPYING.txt
 %{_libdir}/*.so.*
 %{_libdir}/*.a

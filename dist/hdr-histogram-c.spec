@@ -1,16 +1,12 @@
-%{?scl:%scl_package hdr-histogram-c}
-%{!?scl:%global pkg_name %{name}}
-
 Summary:            C port of High Dynamic Range (HDR) Histogram
 Name:               hdr-histogram-c
 Version:            0.9.6
-Release:            6%{?dist}
 License:            BSD or CC0
+Release:            6%{?dist}
 Source:             hdr-histogram-c-%{version}.tar.gz
 URL:                https://github.com/HdrHistogram/HdrHistogram_c
 %if 0%{?rhel} == 6 || 0%{?centos} == 6
 BuildRequires:      scl-utils-build
-BuildRequires:      devtoolset-3-runtime
 BuildRequires:      devtoolset-3-gcc
 Requires:           devtoolset-3-runtime
 %else
@@ -37,30 +33,32 @@ Development packages for the C port of High Dynamic Range (HDR) Histogram
 %build
 mkdir build && cd build
 
+# Note: the make_build macro also does not work on CentOS 6/RHEL 6 on this case
 %if 0%{?rhel} == 6 || 0%{?centos} == 6
-
-%{?scl:scl enable rh-devtoolset-3 "}
-set -e
-cmake -DCMAKE_C_COMPILER=/opt/rh/devtoolset-3/root/usr/bin/gcc -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_LIBDIR:PATH=/usr/lib64 -DINCLUDE_INSTALL_DIR:PATH=/usr/include -DLIB_INSTALL_DIR:PATH=/usr/lib64 -DSYSCONF_INSTALL_DIR:PATH=/etc -DSHARE_INSTALL_PREFIX:PATH=/usr/share -DLIB_SUFFIX=64 -DCMAKE_SKIP_RPATH:BOOL=ON -DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_USER_C_FLAGS="-fPIC" ..
-%make_build all
-%{?scl:"}
-
+cmake -DCMAKE_C_COMPILER=/opt/rh/devtoolset-3/root/usr/bin/gcc -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_USER_C_FLAGS="-fPIC" ..
+make all
 %else
-
 %cmake -DCMAKE_USER_C_FLAGS="-fPIC" ..
 %make_build all
-
 %endif
+
 
 %install
 cd build
 %make_install
 
 %files
-%license LICENSE.txt COPYING.txt
 %{_libdir}/*.so.*
 %{_libdir}/*.a
 %{_bindir}/*
+
+# For some reason the license macro breaks this build on CentOS 6 and RHEL 6
+%if 0%{?rhel} == 6 || 0%{?centos} == 6
+%doc LICENSE.txt 
+%doc COPYING.txt
+%else
+%license LICENSE.txt COPYING.txt
+%endif
 
 %post -p /sbin/ldconfig
 
